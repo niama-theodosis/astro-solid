@@ -1,0 +1,33 @@
+---
+import {PostExtrasFragment, type PostExtrasData} from "@/lib/hashnode/fragments"
+import {readFragment} from "@/lib/hashnode/graphql"
+import {cn} from "@/lib/utils"
+import D from "dayjs"
+import "dayjs/locale/fr"
+import relativeTime from "dayjs/plugin/relativeTime"
+import type {BadgeProps} from "../ui/badge.astro"
+import Badge from "../ui/badge.astro"
+
+D.extend(relativeTime)
+D.locale("fr")
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, data, variant, ...props} = Astro.props
+const {publishedAt, readTimeInMinutes, views} = readFragment(PostExtrasFragment, data)
+const ago = D(publishedAt).fromNow()
+
+// TYPES ***********************************************************************************************************************************
+type Props = BadgeProps & {data: PostExtrasData}
+export type {Props as PostExtrasProps}
+---
+
+<Badge variant={variant} class={cn("justify-center gap-1", className)} {...props}>
+  <span>{ago}</span>
+  <span>·</span>
+  <span>{views} Vues</span>
+  <span>·</span>
+  <div class="flex items-center gap-1">
+    <span class="i-lucide-book-open h-3 w-3"></span>
+    <span>{readTimeInMinutes} min</span>
+  </div>
+</Badge>

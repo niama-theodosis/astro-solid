@@ -1,0 +1,15 @@
+---
+import {cn} from "@/lib/utils"
+import type {VariantProps} from "tailwind-variants"
+import {ALERT} from "."
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, variant, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+export interface Props extends astroHTML.JSX.HTMLAttributes, VariantProps<typeof ALERT> {}
+---
+
+<div role="alert" class={cn(ALERT({variant}), className)} {...props}>
+  <slot />
+</div>

@@ -1,0 +1,11 @@
+---
+import PostsSection from "@/components/post/items-section.astro"
+import {fetchPosts} from "@/lib/hashnode"
+import {fetchHome} from "@/lib/pocketbase"
+
+// DATA ************************************************************************************************************************************
+const [{lastPosts}, items] = await Promise.all([fetchHome(), fetchPosts(3)])
+const {tagline, title} = lastPosts
+---
+
+<PostsSection {items} {title} {tagline} class="bg-white" />

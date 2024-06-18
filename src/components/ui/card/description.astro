@@ -1,0 +1,13 @@
+---
+import {DESCRIPTION} from "."
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+export interface Props extends astroHTML.JSX.HTMLAttributes {}
+---
+
+<p class={DESCRIPTION({className})} {...props}>
+  <slot />
+</p>

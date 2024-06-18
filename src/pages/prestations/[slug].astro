@@ -1,0 +1,115 @@
+---
+import MeetingButton from "@/components/meeting-button.astro"
+import ServiceCard from "@/components/service-card.astro"
+import Badge from "@/components/ui/badge.astro"
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
+import Prose from "@/components/ui/prose.astro"
+import {Section, SectionAside, SectionContent, SectionHeader, SectionMain, SectionTagline, SectionTitle} from "@/components/ui/section"
+// import {Separator} from "@/components/ui/separator"
+import Layout from "@/layouts/layout.astro"
+import {fetchOtherServices, fetchService} from "@/lib/pocketbase"
+import {getServiceColor, getServicePrice} from "@/lib/pocketbase/utils"
+import {Image} from "astro:assets"
+import Accordion from "./_/accordion"
+
+// STATIC **********************************************************************************************************************************
+export {fetchServiceSlugs as generateStaticParams} from "@/lib/pocketbase"
+
+// PARAMS **********************************************************************************************************************************
+const {slug} = Astro.params
+if (!slug) return Astro.redirect("/404")
+
+// DATA ************************************************************************************************************************************
+const item = await fetchService(slug)
+if (!item) return Astro.redirect("/404")
+const {benefits, content, duration, image, name, payments, places, price, proceedings, reasons} = item
+
+const services = await fetchOtherServices(slug)
+
+const paymentI18n = new Map(
+  Object.entries({
+    cash: "espèce",
+    check: "chèque",
+    creditCard: "carte de crédit",
+  })
+)
+
+const placeI18n = new Map(
+  Object.entries({
+    faceToFace: "physique",
+    remotely: "en ligne",
+  })
+)
+
+// CACHE ***********************************************************************************************************************************
+Astro.response.headers.set("cache-control", "public, max-age=0, must-revalidate")
+Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000")
+Astro.response.headers.set("netlify-cache-tag", `services, services_${slug}`)
+---
+
+<Layout title="Prestations">
+  <Section class="flex-1 items-start">
+    <SectionContent>
+      <SectionMain>
+        <SectionHeader>
+          <SectionTitle>{name}</SectionTitle>
+        </SectionHeader>
+        <Prose set:html={content} />
+        <Accordion client:visible variant={getServiceColor(slug)}>
+          <Prose slot="reasons" set:html={reasons} />
+          <Prose slot="proceedings" set:html={proceedings} />
+          <Prose slot="benefits" set:html={benefits} />
+        </Accordion>
+      </SectionMain>
+      <SectionAside class="gap-8 place-self-start">
+        <Image {...image} class="col-span-12 rounded-2xl md:col-span-6 lg:col-span-12" />
+        <Card class="col-span-12 p-6 md:col-span-6 lg:col-span-12">
+          <CardHeader>
+            <CardTitle>Vous êtes intéressé·e?</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="flex justify-between">
+              <div class="space-x-2 text-lg">
+                <span class="font-bold">Durée</span>
+                <span>{duration}</span>
+              </div>
+              <div class="space-x-2 text-lg">
+                <span class="font-bold">Prix</span>
+                <span>{getServicePrice(price)}</span>
+              </div>
+            </div>
+            <!-- <Separator /> -->
+            <div class="space-y-1">
+              <div class="font-bold">Moyens de paiement</div>
+              <div class="space-x-1">
+                {payments.map((payment) => <Badge>{paymentI18n.get(payment)}</Badge>)}
+              </div>
+            </div>
+            <div class="space-y-1">
+              <div class="font-bold">Endroits</div>
+              <div class="space-x-1">
+                {places.map((place) => <Badge>{placeI18n.get(place)}</Badge>)}
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter class="justify-center">
+            <MeetingButton service={slug} size="lg" />
+          </CardFooter>
+        </Card>
+      </SectionAside>
+    </SectionContent>
+  </Section>
+  <Section class="bg-white">
+    <SectionContent>
+      <SectionMain>
+        <SectionHeader>
+          <SectionTitle>Mes autres prestations</SectionTitle>
+          <SectionTagline> Vous pouvez également être intéressé·e par </SectionTagline>
+        </SectionHeader>
+        <div class="mx-auto grid max-w-screen-xl gap-8 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3">
+          {services.map((service) => <ServiceCard key={service.id} service={service} />)}
+        </div>
+      </SectionMain>
+    </SectionContent>
+  </Section>
+</Layout>

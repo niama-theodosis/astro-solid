@@ -1,0 +1,24 @@
+---
+import {PostTagsFragment, type PostTagsData} from "@/lib/hashnode/fragments"
+import {readFragment} from "@/lib/hashnode/graphql"
+import {cn} from "@/lib/utils"
+import {BADGE, type BadgeProps} from "../ui/badge.astro"
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, data, variant, ...props} = Astro.props
+const {tags} = readFragment(PostTagsFragment, data)
+
+// TYPES ***********************************************************************************************************************************
+type Props = BadgeProps & {data: PostTagsData}
+export type {Props as PostTagsProps}
+---
+
+<div class={cn("flex flex-none flex-wrap items-center justify-center gap-1", className)} {...props}>
+  {
+    (tags ?? []).map(({name, slug}) => (
+      <a href={`/blog/tags/${slug}`} class={BADGE({variant})}>
+        {name}
+      </a>
+    ))
+  }
+</div>

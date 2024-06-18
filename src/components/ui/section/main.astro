@@ -1,0 +1,10 @@
+---
+import {MAIN} from "."
+
+const {class: className, ...props} = Astro.props
+export interface Props extends astroHTML.JSX.HTMLAttributes {}
+---
+
+<main class={MAIN({className})} {...props}>
+  <slot />
+</main>

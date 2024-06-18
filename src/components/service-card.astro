@@ -1,0 +1,28 @@
+---
+import MeetingButton from "@/components/meeting-button.astro"
+import MoreButton from "@/components/more-button.astro"
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
+import type {Service} from "@/lib/pocketbase/schemas"
+import {getServiceColor} from "@/lib/pocketbase/utils"
+import {Image} from "astro:assets"
+
+// PROPS ***********************************************************************************************************************************
+const {service: {excerpt, image, name, slug, uri}} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+export interface ServiceCardProps {service: Service}
+---
+
+<Card>
+    <CardHeader>
+      <Image {...image} width={550} height={550} class="aspect-video rounded-2xl object-cover" /> 
+    </CardHeader>
+    <CardContent class="text-center">
+      <CardTitle class="text-xl">{name}</CardTitle>
+      <CardDescription class="flex-1 text-base">{excerpt}</CardDescription>
+    </CardContent>
+    <CardFooter>
+      <MeetingButton service={slug} size="icon" />
+      <MoreButton href={uri} color={getServiceColor(slug)} class="flex-1" />
+    </CardFooter>
+  </Card>

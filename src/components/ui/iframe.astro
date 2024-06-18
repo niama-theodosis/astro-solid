@@ -1,0 +1,43 @@
+---
+import {cn} from "@/lib/utils"
+import {Alert, AlertDescription, AlertTitle} from "./alert"
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, src} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+type Props = {class: string; src: string}
+export type {Props as IframeProps}
+---
+
+<zcal-frame class={cn("relative flex items-center justify-center", className)}>
+  <Alert class="w-auto transition-opacity duration-1000">
+    <AlertTitle>Encore quelques instants</AlertTitle>
+    <AlertDescription>L&apos;agenda est en cours de chargement...</AlertDescription>
+  </Alert>
+
+  <iframe loading="lazy" title="Agenda" {src} class="absolute inset-0 w-full h-full"></iframe>
+</zcal-frame>
+
+<script>
+  class ZcalFrame extends HTMLElement {
+    constructor() {
+      super()
+
+      const iframe = this.querySelector("iframe")!
+      const alert = this.querySelector("div[role=alert]")!
+
+      iframe.classList.add("opacity-0")
+
+      setTimeout(() => {
+        iframe.classList.add("transition-opacity", "duration-1000", "delay-1000")
+        iframe.addEventListener("load", () => {
+          alert.classList.add("opacity-0")
+          iframe.classList.add("opacity-100")
+        })
+      }, 0)
+    }
+  }
+
+  customElements.define("zcal-frame", ZcalFrame)
+</script>

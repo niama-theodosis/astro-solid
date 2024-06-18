@@ -1,0 +1,21 @@
+---
+import Layout from "@/layouts/layout.astro"
+import {fetchPage} from "@/lib/pocketbase"
+
+// DATA ************************************************************************************************************************************
+const data = await fetchPage("qui-suis-je")
+if (!data) return Astro.redirect("/404")
+const {content, title} = data
+
+// CACHE ***********************************************************************************************************************************
+Astro.response.headers.set("cache-control", "public, max-age=0, must-revalidate")
+Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000")
+Astro.response.headers.set("netlify-cache-tag", "pages_qui-suis-je")
+---
+
+<Layout title="Qui suis-je ?">
+  <article class="prose mx-auto max-w-screen-xl flex-1 px-8 py-16 prose-headings:font-heading">
+    <h1>{title}</h1>
+    <div set:html={content} />
+  </article>
+</Layout>

@@ -1,0 +1,39 @@
+---
+import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb"
+import Iframe from "@/components/ui/iframe.astro"
+import Layout from "@/layouts/layout.astro"
+import {fetchService} from "@/lib/pocketbase"
+
+// STATIC **********************************************************************************************************************************
+export {fetchServiceSlugs as generateStaticParams} from "@/lib/pocketbase"
+
+// PARAMS **********************************************************************************************************************************
+const {slug} = Astro.params
+if (!slug) return Astro.redirect("/404")
+
+const item = await fetchService(slug)
+if (!item) return Astro.redirect("/404")
+const {name, zcalUrl} = item
+---
+
+<Layout title="Rendez-vous">
+  <section class="relative flex flex-1 flex-col items-center justify-between gap-4 pt-4">
+    <Breadcrumb class="flex-none">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/"> Accueil </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/rendez-vous"> Rendez-vous </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{name}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+
+    <Iframe src={zcalUrl} class="w-full flex-1" />
+  </section>
+</Layout>

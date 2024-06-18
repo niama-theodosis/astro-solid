@@ -1,0 +1,30 @@
+---
+import MoreButton from "@/components/more-button.astro"
+import Prose from "@/components/ui/prose.astro"
+import {Section, SectionAside, SectionContent, SectionHeader, SectionMain, SectionTitle} from "@/components/ui/section"
+import {fetchHome} from "@/lib/pocketbase"
+import {Image} from "astro:assets"
+
+// DATA ************************************************************************************************************************************
+const {about} = await fetchHome()
+const {content, image, title} = about
+---
+
+<Section variant="default" class="px-8">
+  <SectionContent class="rounded-2xl bg-secondary/10 p-8">
+    {
+      image && (
+        <SectionAside class="max-w-md place-self-center">
+          <Image {...image} width={448} height={448} class="col-span-12 rounded-full" />
+        </SectionAside>
+      )
+    }
+    <SectionMain class="place-self-center">
+      <SectionHeader>
+        <SectionTitle>{title}</SectionTitle>
+        <Prose set:html={content} />
+      </SectionHeader>
+      <MoreButton href="/qui-suis-je" size="lg" class="self-end" />
+    </SectionMain>
+  </SectionContent>
+</Section>

@@ -1,0 +1,13 @@
+---
+import {FOOTER} from "."
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+export interface Props extends astroHTML.JSX.HTMLAttributes {}
+---
+
+<div class={FOOTER({className})} {...props}>
+  <slot />
+</div>

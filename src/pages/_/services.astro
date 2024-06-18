@@ -1,0 +1,24 @@
+---
+import ServiceCard from "@/components/service-card.astro"
+import {Section, SectionContent, SectionHeader, SectionMain, SectionTagline, SectionTitle} from "@/components/ui/section"
+import {fetchHome, fetchServices} from "@/lib/pocketbase"
+
+// DATA ************************************************************************************************************************************
+const home = await fetchHome()
+const {tagline, title} = home.services
+const services = await fetchServices()
+---
+
+<Section>
+  <SectionContent>
+    <SectionMain>
+      <SectionHeader>
+        <SectionTitle>{title}</SectionTitle>
+        <SectionTagline>{tagline}</SectionTagline>
+      </SectionHeader>
+      <div class="mx-auto grid max-w-screen-xl gap-8 sm:grid-cols-2 xl:grid-cols-4">
+        {services.map((service) => <ServiceCard {service} />)}
+      </div>
+    </SectionMain>
+  </SectionContent>
+</Section>

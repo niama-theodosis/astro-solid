@@ -1,0 +1,49 @@
+---
+import {ButtonLink} from "@/components/ui/button"
+import {hashnode} from "@/lib/hashnode"
+import {graphql} from "@/lib/hashnode/graphql"
+import {cn} from "@/lib/utils"
+import {PUBLIC_HASHNODE_PUBLICATION_HOST} from "astro:env/server"
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, ...props} = Astro.props
+
+// DATA ************************************************************************************************************************************
+export const SocialsQuery = graphql(`
+  query Socials($host: String!) {
+    publication(host: $host) {
+      author {
+        socialMediaLinks {
+          facebook
+          instagram
+          youtube
+        }
+      }
+    }
+  }
+`)
+
+const fetchSocials = async () => {
+  const {publication} = await hashnode.request(SocialsQuery, {host: PUBLIC_HASHNODE_PUBLICATION_HOST})
+  return [
+    {id: "instagram", icon: "i-lucide-instagram", url: publication?.author.socialMediaLinks?.instagram},
+    {id: "youtube", icon: "i-lucide-youtube", url: publication?.author.socialMediaLinks?.youtube},
+    {id: "facebook", icon: "i-lucide-facebook", url: publication?.author.socialMediaLinks?.facebook},
+  ]
+}
+
+const socials = await fetchSocials()
+
+// TYPES ***********************************************************************************************************************************
+export interface Props extends astroHTML.JSX.HTMLAttributes {}
+---
+
+<div class={cn("flex items-center gap-1 lg:gap-2", className)} {...props}>
+  {
+    socials.map(({icon, url}) => (
+      <ButtonLink size="icon" href={url ?? ""} target="_blank">
+        <span class={cn(icon, "h-4 w-4")} />
+      </ButtonLink>
+    ))
+  }
+</div>

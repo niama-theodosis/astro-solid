@@ -1,0 +1,37 @@
+---
+import {PostCardFragment, type PostCardData} from "@/lib/hashnode/fragments"
+import {readFragment} from "@/lib/hashnode/graphql"
+import {Image} from "astro:assets"
+import MoreButton from "../more-button.astro"
+import {CardContent, CardDescription, CardFooter, CardHeader, Card as CardRoot, CardTitle} from "../ui/card"
+import PostExtras from "./extras.astro"
+import PostTags from "./tags.astro"
+
+// PROPS ***********************************************************************************************************************************
+const {data} = Astro.props
+const {brief, slug, title, ...r} = readFragment(PostCardFragment, data)
+const coverImage = r.coverImage?.url ?? "https://utfs.io/f/3bf8603c-0ce7-4e28-8b0a-a960cd2fa77e-2ihokg.jpeg" // "TODO: Add default cover image"
+
+// TYPES ***********************************************************************************************************************************
+type Props = {data: PostCardData}
+export type {Props as PostCardProps}
+---
+
+<CardRoot>
+  <CardHeader>
+    <a href={`/blog/${slug}`}>
+      <Image src={coverImage} alt={title} width={1600} height={900} class="aspect-video rounded-2xl object-cover" />
+    </a>
+  </CardHeader>
+  <CardContent class="text-center">
+    <PostTags data={r} />
+    <a href={`/blog/${slug}`} class="block flex-none">
+      <CardTitle>{title}</CardTitle>
+    </a>
+    <CardDescription class="flex-1 text-justify text-base">{brief}</CardDescription>
+  </CardContent>
+  <CardFooter class="flex-col items-stretch gap-4">
+    <MoreButton href={`/blog/${slug}`} label="Lire" />
+    <PostExtras data={r} />
+  </CardFooter>
+</CardRoot>

@@ -1,0 +1,17 @@
+---
+import {tv} from "tailwind-variants"
+
+// STYLES **********************************************************************************************************************************
+export const PROSE = tv({base: "prose prose-headings:font-heading max-w-none text-justify"})
+
+// PROPS ************************************************************************************************************************************
+const {class: className, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+type Props = astroHTML.JSX.HTMLAttributes
+export {type Props as ProseProps}
+---
+
+<article class={PROSE({className})} {...props}>
+  <slot />
+</article>

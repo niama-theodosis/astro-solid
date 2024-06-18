@@ -1,0 +1,20 @@
+---
+import type {Message} from "@/actions/utils"
+import {Alert, AlertDescription, AlertTitle} from "./ui/alert"
+
+// PROPS ***********************************************************************************************************************************
+const {message} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+type Props = {message: Message | undefined}
+export type {Props as FallbackAlertProps}
+---
+
+{
+  message && (
+    <Alert variant={message.code === "SUCCESS" ? "success" : "destructive"}>
+      <AlertTitle>{message.code === "SUCCESS" ? "Succès" : "Erreur"}</AlertTitle>
+      <AlertDescription>{message.description}</AlertDescription>
+    </Alert>
+  )
+}

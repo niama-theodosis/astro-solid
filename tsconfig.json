@@ -1,0 +1,18 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "plugins": [
+      {
+        "name": "@0no-co/graphqlsp",
+        "schema": "https://gql.hashnode.com",
+        "tadaOutputLocation": "./src/lib/hashnode/graphql-env.d.ts"
+      }
+    ]
+  }
+}

@@ -1,0 +1,69 @@
+---
+import {PostExtras, PostTags} from "@/components/post"
+import {Card} from "@/components/ui/card"
+import Prose from "@/components/ui/prose.astro"
+import {Section, SectionContent, SectionHeader, SectionMain, SectionTagline, SectionTitle} from "@/components/ui/section"
+import Layout from "@/layouts/layout.astro"
+import {hashnode} from "@/lib/hashnode"
+import {PostExtrasFragment, PostTagsFragment, PublicationFragment} from "@/lib/hashnode/fragments"
+import {graphql} from "@/lib/hashnode/graphql"
+import {Image} from "astro:assets"
+import {PUBLIC_HASHNODE_PUBLICATION_HOST} from "astro:env/server"
+
+// PARAMS **********************************************************************************************************************************
+const {slug} = Astro.params
+if (!slug) return Astro.redirect("/404")
+
+// DATA ************************************************************************************************************************************
+const PostQuery = graphql(
+  `
+    query Post($slug: String!, $host: String!) {
+      publication(host: $host) {
+        ...Publication
+        post(slug: $slug) {
+          content {
+            html
+          }
+          coverImage {
+            url
+          }
+          subtitle
+          title
+          ...PostExtras
+          ...PostTags
+        }
+      }
+    }
+  `,
+  [PublicationFragment, PostExtrasFragment, PostTagsFragment]
+)
+
+const data = await hashnode.request(PostQuery, {host: PUBLIC_HASHNODE_PUBLICATION_HOST, slug})
+if (!data?.publication?.post) return Astro.redirect("/404")
+const {content, subtitle, title, ...r} = data.publication.post
+const coverImage = r.coverImage?.url ?? "https://utfs.io/f/3bf8603c-0ce7-4e28-8b0a-a960cd2fa77e-2ihokg.jpeg" //TODO: Add default cover image"
+
+// CACHE ***********************************************************************************************************************************
+Astro.response.headers.set("cache-control", "public, max-age=0, must-revalidate")
+Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000")
+Astro.response.headers.set("netlify-cache-tag", `post_${slug}`)
+---
+
+<Layout title="Blog">
+  <Section>
+    <SectionContent>
+      <SectionMain>
+        <Image class="rounded-lg" src={coverImage} alt={title} width={1920} height={1080} />
+        <Card class="gap-8">
+          <SectionHeader class="max-w-none">
+            <SectionTitle>{title}</SectionTitle>
+            {subtitle && <SectionTagline>{subtitle}</SectionTagline>}
+          </SectionHeader>
+          <PostTags data={r} />
+          <PostExtras data={r} variant="secondary" class="gap-4 sm:text-base md:text-lg" />
+        </Card>
+        <Prose dangerouslySetInnerHTML={{__html: content.html}} />
+      </SectionMain>
+    </SectionContent>
+  </Section>
+</Layout>

@@ -1,0 +1,10 @@
+---
+import {TAGLINE} from "."
+
+const {class: className, ...props} = Astro.props
+export interface Props extends astroHTML.JSX.HTMLAttributes {}
+---
+
+<p class={TAGLINE({className})} {...props}>
+  <slot />
+</p>

@@ -1,0 +1,23 @@
+---
+import {Card, CardContent, CardFooter, CardHeader} from "../ui/card"
+import {default as SkeletonRoot} from "../ui/skeleton.astro"
+---
+
+<Card>
+  <CardHeader>
+    <SkeletonRoot class="aspect-video w-full rounded-2xl" />
+  </CardHeader>
+  <CardContent>
+    <div class="flex items-center justify-center gap-1">
+      {[0, 1].map((index) => (
+        <SkeletonRoot key={index} class="h-[22px] w-20 rounded-full" />
+      ))}
+    </div>
+    <SkeletonRoot class="h-8 w-full" />
+    <SkeletonRoot class="h-36 w-full" />
+  </CardContent>
+  <CardFooter class="flex-col gap-4">
+    <SkeletonRoot class="h-10 w-full rounded-md" />
+    <SkeletonRoot class="h-[22px] w-full rounded-full" />
+  </CardFooter>
+</Card>

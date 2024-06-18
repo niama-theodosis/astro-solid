@@ -1,0 +1,11 @@
+---
+import type {VariantProps} from "tailwind-variants"
+import {SECTION, TITLE} from "."
+
+const {class: className, ...props} = Astro.props
+export interface Props extends astroHTML.JSX.HTMLAttributes, VariantProps<typeof SECTION> {}
+---
+
+<h2 class={TITLE({className})} {...props}>
+  <slot />
+</h2>

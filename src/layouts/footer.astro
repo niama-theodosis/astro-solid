@@ -1,0 +1,20 @@
+---
+import SocialButtons from "@/components/social-buttons.astro"
+import {cn} from "@/lib/utils"
+
+// ROOT ************************************************************************************************************************************
+const {class: className, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+export interface Props extends astroHTML.JSX.HTMLAttributes {}
+---
+
+<footer class={cn("bg-tertiary text-tertiary-foreground", className)} {...props}>
+  <div class="container mx-auto flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex items-center justify-between">
+      <a href="/mentions-legales">Mentions légales</a>
+      <SocialButtons class="sm:hidden" />
+    </div>
+    <div class="text-center text-xs sm:text-sm">Copyright © 2024 Theodosis. Tous droits réservés.</div>
+  </div>
+</footer>

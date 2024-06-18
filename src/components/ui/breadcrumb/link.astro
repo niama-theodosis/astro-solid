@@ -1,0 +1,14 @@
+---
+import {cn} from "@/lib/utils"
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+type Props = astroHTML.JSX.AnchorHTMLAttributes
+export type {Props as BreadcrumbLinkProps}
+---
+
+<a class={cn("transition-colors hover:text-foreground", className)} {...props}>
+  <slot />
+</a>

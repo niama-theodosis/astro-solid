@@ -1,0 +1,18 @@
+---
+import {getServiceColor} from "@/lib/pocketbase/utils"
+import {ButtonLink, type ButtonLinkProps} from "./ui/button"
+
+// PROPS ***********************************************************************************************************************************
+const {color, service, size, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+export interface Props extends ButtonLinkProps {
+  service?: string
+}
+---
+
+<ButtonLink href={`/rendez-vous${service ? "/" + service : ""}`} size={size} color={color ?? getServiceColor(service)} {...props}>
+  <span class="i-lucide-calendar-heart h-4 w-4"></span>
+  {size === "hybrid" && <span class="sr-only lg:not-sr-only lg:ml-2 lg:whitespace-nowrap">Prendre rendez-vous</span>}
+  {size !== "hybrid" && size !== "icon" && <span class="ml-2">Prendre rendez-vous</span>}
+</ButtonLink>

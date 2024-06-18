@@ -1,0 +1,10 @@
+---
+import {ASIDE} from "."
+
+const {class: className, ...props} = Astro.props
+export interface Props extends astroHTML.JSX.HTMLAttributes {}
+---
+
+<aside class={ASIDE({className})} {...props}>
+  <slot />
+</aside>

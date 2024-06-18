@@ -1,0 +1,89 @@
+---
+import {ButtonLink} from "@/components/ui/button"
+import {Card, CardContent} from "@/components/ui/card"
+import {Section, SectionAside, SectionContent, SectionHeader, SectionMain, SectionTagline, SectionTitle} from "@/components/ui/section"
+import {HEADING} from "@/components/ui/typography"
+import Layout from "@/layouts/layout.astro"
+import {fetchContact} from "@/lib/pocketbase"
+import {actions} from "astro:actions"
+// import ContactForm from "./_/form"
+// import Map from "./_/map"
+
+// DATA ************************************************************************************************************************************
+const state = Astro.getActionResult(actions.sendEmail) ?? {data: false, error: undefined}
+// const values = await getValuesFor({
+//   actionName: "sendEmail",
+//   defaultValues: {email: "", forename: "", message: "", surname: ""},
+//   shouldSkip: (state: ContactState) => !!state.data,
+// })(Astro.request, state)
+// const message = getContactMessage(state)
+
+const {city, email, lat, lng, phone, street, zipcode} = await fetchContact()
+
+// CACHE ***********************************************************************************************************************************
+Astro.response.headers.set("cache-control", "public, max-age=0, must-revalidate")
+Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000")
+Astro.response.headers.set("netlify-cache-tag", "contact")
+---
+
+<Layout title="Contact">
+  <Section class="flex-1">
+    <SectionContent>
+      <SectionMain>
+        <SectionHeader>
+          <SectionTitle>Contactez-moi</SectionTitle>
+          <SectionTagline>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </SectionTagline>
+        </SectionHeader>
+        <!-- <ContactForm defaultValues={values} initialState={state}>
+          <FallbackAlert {message} />
+        </ContactForm> -->
+      </SectionMain>
+      <SectionAside>
+        <Card class="col-span-12 p-8">
+          <CardContent class="gap-8">
+            <div class="flex flex-col items-center gap-4 text-center">
+              <div class="h-16 w-16 rounded-xl bg-secondary p-4 text-secondary-foreground">
+                <span class="i-lucide-map-pin h-8 w-8"></span>
+              </div>
+              <h4 class={HEADING({level: 4})}>Adresse :</h4>
+              <div>
+                <p>{street}</p>
+                <p>
+                  {zipcode}
+                  <span class="uppercase">{city}</span>
+                </p>
+              </div>
+            </div>
+            <div class="flex flex-col items-center gap-4 text-center">
+              <div class="h-16 w-16 rounded-xl bg-secondary p-4 text-secondary-foreground">
+                <span class="i-lucide-phone h-8 w-8"></span>
+              </div>
+              <h4 class={HEADING({level: 4})}>Téléphone :</h4>
+              <div>
+                <p>N&apos;hésitez pas à me contacter si vous avez la moindre question :</p>
+                <ButtonLink href={`tel:${phone}`} variant="link" class="text-lg">
+                  {phone}
+                </ButtonLink>
+              </div>
+            </div>
+            <div class="flex flex-col items-center gap-4 text-center">
+              <div class="h-16 w-16 rounded-xl bg-secondary p-4 text-secondary-foreground">
+                <span class="i-lucide-mail h-8 w-8"></span>
+              </div>
+              <h4 class={HEADING({level: 4})}>Courriel :</h4>
+              <div>
+                <p>Vous pouvez aussi me contacter directement par courriel :</p>
+                <ButtonLink href={`mailto:${email}`} variant="link" class="text-lg">
+                  {email}
+                </ButtonLink>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </SectionAside>
+    </SectionContent>
+  </Section>
+  <!-- <Map client:only="react" center={[lat, lng]} zoom={13} className="h-96 w-full" /> -->
+</Layout>

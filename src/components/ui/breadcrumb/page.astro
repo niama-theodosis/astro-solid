@@ -1,0 +1,14 @@
+---
+import {cn} from "@/lib/utils"
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+type Props = astroHTML.JSX.HTMLAttributes
+export type {Props as BreadcrumbPageProps}
+---
+
+<span role="link" aria-disabled="true" aria-current="page" class={cn("font-normal text-foreground", className)} {...props}>
+  <slot />
+</span>

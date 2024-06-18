@@ -1,0 +1,31 @@
+---
+import MoreButton from "@/components/more-button.astro"
+import {Section, SectionAside, SectionContent, SectionHeader, SectionMain, SectionTitle, TAGLINE} from "@/components/ui/section"
+import {fetchHome} from "@/lib/pocketbase"
+import {Image} from "astro:assets"
+
+// DATA ************************************************************************************************************************************
+const {hero} = await fetchHome()
+const {content, image, title} = hero
+---
+
+<Section variant="default">
+  <SectionContent>
+    <SectionMain class="lg:col-span-6 xl:col-span-7">
+      <SectionHeader class="max-w-none gap-8 lg:text-left">
+        <SectionTitle level={1} class="text-5xl md:text-6xl">
+          {title}
+        </SectionTitle>
+        <div set:html={content} class={TAGLINE({className: "text-justify lg:text-left"})} />
+      </SectionHeader>
+      <MoreButton href="/prestations/alchimie-cellulaire" color="primary" size="lg" class="self-end" />
+    </SectionMain>
+    {
+      image && (
+        <SectionAside class="max-w-lg place-self-center lg:col-span-6 xl:col-span-5">
+          <Image {...image} loading="eager" class="col-span-12 rounded-full" />
+        </SectionAside>
+      )
+    }
+  </SectionContent>
+</Section>

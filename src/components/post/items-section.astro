@@ -1,0 +1,37 @@
+---
+import type {PostCardData} from "@/lib/hashnode/fragments"
+import {Section, SectionContent, SectionHeader, SectionMain, SectionTagline, SectionTitle, type SectionProps} from "../ui/section"
+import PostCard from "./card.astro"
+import PostNone from "./none.astro"
+
+// PROPS ***********************************************************************************************************************************
+const {items, tagline, title, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+type Props = SectionProps & {items: PostCardData[]; tagline: string; title: string}
+export type {Props as PostItemsSectionProps}
+---
+
+<Section {...props}>
+  <SectionContent>
+    <SectionMain>
+      <SectionHeader>
+        <SectionTitle>{title}</SectionTitle>
+        <SectionTagline>{tagline}</SectionTagline>
+      </SectionHeader>
+      <div class="mx-auto grid w-full max-w-screen-xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          items.length === 0 ? (
+            <PostNone />
+          ) : (
+            <>
+              {items.map((data) => (
+                <PostCard {data} />
+              ))}
+            </>
+          )
+        }
+      </div>
+    </SectionMain>
+  </SectionContent>
+</Section>

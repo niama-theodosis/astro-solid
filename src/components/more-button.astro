@@ -1,0 +1,16 @@
+---
+import {ButtonLink, type ButtonLinkProps} from "./ui/button"
+
+// PROPS ***********************************************************************************************************************************
+const {label = "En savoir plus", ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+export interface Props extends ButtonLinkProps {
+  label?: string
+}
+---
+
+<ButtonLink {...props}>
+  <span>{label}</span>
+  <span class="i-lucide-arrow-right ml-2 h-4 w-4"></span>
+</ButtonLink>

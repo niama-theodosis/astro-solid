@@ -1,0 +1,56 @@
+---
+import {cn} from "@/lib/utils"
+import "@/styles/globals.css"
+import {AstroFont} from "astro-font"
+import {ViewTransitions} from "astro:transitions"
+import Footer from "./footer.astro"
+import Header from "./header.astro"
+
+// PROPS ***********************************************************************************************************************************
+const {title} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+type Props = {title: string}
+export type {Props as LayoutProps}
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <AstroFont
+      config={[
+        {
+          src: [],
+          name: "Poppins",
+          googleFontsURL: "https://fonts.googleapis.com/css2?family=Poppins:wght@700&subset=latin&display=swap",
+          preload: true,
+          display: "swap",
+          selector: "body",
+          fallback: "sans-serif",
+          cssVariable: "font-heading",
+        },
+        {
+          src: [],
+          name: "Quicksand",
+          googleFontsURL: "https://fonts.googleapis.com/css2?family=Quicksand&subset=latin&display=swap",
+          preload: true,
+          display: "swap",
+          selector: "body",
+          fallback: "sans-serif",
+          cssVariable: "font-base",
+        },
+      ]}
+    />
+    <ViewTransitions />
+  </head>
+  <body class={cn("font-base flex min-h-screen flex-col overflow-x-hidden overflow-y-scroll antialiased")}>
+    <Header class="sticky top-0 z-20" />
+    <slot />
+    <Footer />
+  </body>
+</html>

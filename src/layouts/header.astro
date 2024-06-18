@@ -1,0 +1,59 @@
+---
+import MeetingButton from "@/components/meeting-button.astro"
+import SocialButtons from "@/components/social-buttons.astro"
+import {ButtonLink} from "@/components/ui/button"
+import {fetchContact, fetchServices} from "@/lib/pocketbase"
+import type {Image} from "@/lib/pocketbase/schemas"
+import {cn} from "@/lib/utils"
+import {Menu} from "./header.menu"
+// import {HeaderSheet} from "./header.sheet"
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, ...props} = Astro.props
+
+// DATA ************************************************************************************************************************************
+const [{name}, services] = await Promise.all([fetchContact(), fetchServices()])
+
+const navs: Nav[] = [
+  {
+    id: "services",
+    href: "/prestations",
+    label: "Prestations",
+    items: services.map(({excerpt: text, id, image, name: label, uri}) => ({
+      href: uri,
+      id: `${id}`,
+      image,
+      label,
+      text,
+    })),
+  },
+  {id: "about", href: "/qui-suis-je", label: "Qui suis-je?"},
+  {id: "blog", href: "/blog", label: "Blog"},
+  {id: "contact", href: "/contact", label: "Contact"},
+]
+
+// TYPES ***********************************************************************************************************************************
+export type Nav = {
+  id: string
+  href: string
+  label: string
+  items?: (Nav & {image: Image; text: string})[]
+}
+export interface Props extends astroHTML.JSX.HTMLAttributes {}
+---
+
+<header class={cn("border-b border-transparent bg-white transition-all", className)} {...props}>
+  <div class="container mx-auto px-4 py-2 sm:py-4 xl:px-8">
+    <div class="flex items-center justify-between">
+      <ButtonLink href="/" variant="link" class="p-0 font-heading text-3xl font-bold text-black hover:no-underline lg:text-4xl">
+        {name}
+      </ButtonLink>
+      <Menu client:visible {navs} class="hidden md:flex" />
+      <div class="flex items-center gap-1 lg:gap-2">
+        <MeetingButton color="primary" size="hybrid" />
+        <SocialButtons class="hidden sm:flex" />
+        <!-- <HeaderSheet client:visible {navs} /> -->
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,38 @@
+---
+import PostsSection from "@/components/post/items-section.astro"
+import Layout from "@/layouts/layout.astro"
+import {fetchPosts, hashnode} from "@/lib/hashnode"
+import {graphql} from "@/lib/hashnode/graphql"
+import {PUBLIC_HASHNODE_PUBLICATION_HOST} from "astro:env/server"
+
+// DATA ************************************************************************************************************************************
+const PublicationQuery = graphql(`
+  query Posts($host: String!) {
+    publication(host: $host) {
+      about {
+        text
+      }
+      displayTitle
+      title
+    }
+  }
+`)
+
+const fetchPublication = async () => {
+  const data = await hashnode.request(PublicationQuery, {host: PUBLIC_HASHNODE_PUBLICATION_HOST})
+  const title = data.publication?.displayTitle ?? data.publication?.title ?? "Blog"
+  const tagline = data.publication?.about?.text ?? "Découvrez nos articles"
+  return {title, tagline}
+}
+
+const [{tagline, title}, items] = await Promise.all([fetchPublication(), fetchPosts(20)])
+
+// CACHE ***********************************************************************************************************************************
+Astro.response.headers.set("cache-control", "public, max-age=0, must-revalidate")
+Astro.response.headers.set("netlify-cdn-cache-control", "s-maxage=31536000")
+Astro.response.headers.set("netlify-cache-tag", "posts")
+---
+
+<Layout title="Blog">
+  <PostsSection {items} {tagline} {title} class="flex-1" />
+</Layout>

@@ -1,0 +1,38 @@
+---
+import {getNewsletterMessage, getValuesFor, type NewsletterState} from "@/actions/utils"
+import FallbackAlert from "@/components/fallback-alert.astro"
+import Prose from "@/components/ui/prose.astro"
+import {Section, SectionContent, SectionHeader, SectionMain, SectionTagline, SectionTitle} from "@/components/ui/section"
+import {fetchHome} from "@/lib/pocketbase"
+import {actions} from "astro:actions"
+import {NewsletterForm} from "./newsletter-form"
+
+// DATA ************************************************************************************************************************************
+const state = Astro.getActionResult(actions.subscribeToNewsletter) ?? {data: false, error: undefined}
+const values = await getValuesFor({
+  actionName: "subscribeToNewsletter",
+  defaultValues: {email: ""},
+  shouldSkip: (state: NewsletterState) => !!state.data || state.error?.code === "CONFLICT",
+})(Astro.request, state)
+const message = getNewsletterMessage(state)
+
+const {newsletter} = await fetchHome()
+const {content, tagline, title} = newsletter
+---
+
+<Section>
+  <SectionContent>
+    <SectionMain>
+      <SectionHeader>
+        <SectionTitle>{title}</SectionTitle>
+        <SectionTagline>{tagline}</SectionTagline>
+      </SectionHeader>
+      <Prose set:html={content} />
+      <div class="mx-auto w-full max-w-2xl space-y-4">
+        <NewsletterForm client:visible initialState={state} defaultValues={values}>
+          <FallbackAlert {message} />
+        </NewsletterForm>
+      </div>
+    </SectionMain>
+  </SectionContent>
+</Section>

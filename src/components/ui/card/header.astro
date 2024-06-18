@@ -1,0 +1,13 @@
+---
+import {HEADER} from "."
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+export interface Props extends astroHTML.JSX.HTMLAttributes {}
+---
+
+<div class={HEADER({className})} {...props}>
+  <slot />
+</div>

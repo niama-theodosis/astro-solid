@@ -1,0 +1,14 @@
+---
+import type {VariantProps} from "tailwind-variants"
+import {BUTTON} from "."
+
+// PROPS ***********************************************************************************************************************************
+const {class: className, color, variant, size, ...props} = Astro.props
+
+// TYPES ***********************************************************************************************************************************
+export interface Props extends Omit<astroHTML.JSX.AnchorHTMLAttributes, "color">, VariantProps<typeof BUTTON> {}
+---
+
+<a class={BUTTON({color, size, variant, className})} {...props}>
+  <slot />
+</a>
